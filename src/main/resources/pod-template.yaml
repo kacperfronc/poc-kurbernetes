@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: kurbernetes
+  name: kurbernetes
+  namespace: default
+spec:
+  containers:
+    - image: rclone/rclone
+      name: rclone
+      args:
+        - sync
+        - s3-remote:w3897-eu-third-bucket
+        - s3-remote:w3897-eu-fourth-bucket
+        - --checksum
+        - -v
+        - --use-json-log
+        - --stats-one-line
+      resources: { }
+      volumeMounts:
+        - mountPath: /config/rclone/rclone.conf
+          subPath: rclone.conf
+          name: rclone-conf-secret
+  volumes:
+    - name: rclone-conf-secret
+      secret:
+        secretName: kurbernetes-secret
+  restartPolicy: Never
